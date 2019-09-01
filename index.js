@@ -1,35 +1,31 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fetch = require("node-fetch");
-const cors = require('cors');
-
-const PORT = 3000;
-const HOST = 'localhost';
-
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-
-
 const API_URL = "https://starwars.egghead.training/";
 
-fetch(API_URL + "movies")
+const output = document.getElementById("output");
+const spinner = document.getElementById("spinner");
+
+function getFilmTitles(films) {
+    return films
+        .slice()
+        .sort((a, b) => a.episode_id - b.episode_id)
+        .map(film => `${film.episode_id}. ${film.title}`)
+        .join("\n");
+}
+
+fetch(API_URL + "films")
     .then(response => {
-        if(!response.ok) {
-            throw Error("Unsuccessful response");
+        if (!response.ok) {
+           return Promise.reject(
+               new Error("unsuccessful responde")
+           );
         }
-        return response.json()
-    .then(films => {
-        const filmTitles = films
-            .sort((a, b) => a.episode_id - b.episode_id)
-            .map(film => `${film.episode_id}. ${film.title}`)
-            .join("\n");
-        console.log(filmTitles);
-    });
+        return response.json().then(films => {
+            output.innerText = getFilmTitles(films);
+        });
     })
     .catch(error => {
         console.warn(error);
+        output.innerText = ":(";
+    })
+    .finally(() => {
+        spinner.remove();
     });
-
-app.listen(PORT, HOST);
-console.log(`Running on http://${HOST}:${PORT}`);
