@@ -13,8 +13,12 @@ app.use(cors());
 
 const API_URL = "https://starwars.egghead.training/";
 
-fetch(API_URL + "films")
-    .then(response => { return response.json()
+fetch(API_URL + "movies")
+    .then(response => {
+        if(!response.ok) {
+            throw Error("Unsuccessful response");
+        }
+        return response.json()
     .then(films => {
         const filmTitles = films
             .sort((a, b) => a.episode_id - b.episode_id)
