@@ -14,17 +14,18 @@ app.use(cors());
 const API_URL = "https://starwars.egghead.training/";
 
 fetch(API_URL + "films")
-    .then(response => response.json())
+    .then(response => { return response.json()
     .then(films => {
         const filmTitles = films
             .sort((a, b) => a.episode_id - b.episode_id)
             .map(film => `${film.episode_id}. ${film.title}`)
             .join("\n");
         console.log(filmTitles);
-    },
-    error => {
-    console.warn(error);
-});
+    });
+    })
+    .catch(error => {
+        console.warn(error);
+    });
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
